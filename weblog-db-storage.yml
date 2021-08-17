@@ -34,6 +34,22 @@ spec:
 
 ---
 apiVersion: v1
+kind: Secret
+metadata:
+  creationTimestamp: "2021-08-17T14:28:52Z"
+  name: mongo-sevret
+  namespace: default
+  labels:
+    app: weblog
+    type: database
+type: Opaque
+data:
+  root_username: YWRtaW4=
+  root_password: UGFzc3cwcmQ=
+  keyfile: OW5zNjdZQ1NOOXkzWHJVeEtUSWZ3SlNSSVJmcGd5U2RIdExackc5a1dxUHZlOC9TbUdPb3YydDJTQWJXdzhZS1ZKYjloSEZQT1R1RmdHNzl4TmVJQXBhRWZEWit4VStFRkxQazRPYXFLd1FGbUZFWVZDamdrS3dvWUR2WnUyM0R2emhIOGtQcWNNTTMvems0QXJCVVVTYVFwejk0RXNSajVSQzdKVSs4ck5VYzFheW1iM3dJa3FTd0ZtcXhoZU44MU44TStnU3A5TGhiY1BFeGE3UndMQ1Bmd2tFSS9zS2YrdENFVjZ6dE5HNmFQNW1sN2VjRjB1blFDYWJ1dmhWeG01RzBwa0xyM1F2SXlrSU9sb3JFRGEvOFVuQ2ovdXlqUEUrR3JoTmV3SlZQUUMvTGE5UytQR3ZZMFNRcklxanNWQkdJMVAxYVB5a2lLNzlod0VEZEp3ZXdDTkJHa3pITGdBQzd5WFREcXBLelRpVFZaOUs2ZE5ENDJWRjhaZnNMV3ZCNjFNTzN2ditubmJpSm42WkcrMUhOR3YxeGhmVEZpOHEyVzlpOGE5aUZYTmhzUnhmc212bTU5VC9COEFKdHFmSVUxbENxQXBSK3ptbTJwMGVXTm4vdVZ6TEtPMm50enRwOTduR2hmVzRaTWVoWGZOOFdJTjR6SkFSZ0NXZUZHalUwbzZyMjJDZ05hTzhETWdVMWpHaUVvWjc1MmVNS1hCOUFwUHV3Y0FDUmNvMGFKbjg1VWMzSHB4bFptd2FmVllNc2pQVXR4Z2w4U3czZzZIY3ZXRmRtSGR6cGQvdXZQVGhPQkMrWjBJRm9ONlFmblovSVZVVEpvMGhuWXEwL0JiMlFPaDhaUVYxaVVhK2RSb05SYmg0bHdZNDZabC9ZWFVBZFVnS1FEUWRaVkFUZ0pHZGpqNzYrcmZ3bGl3cTRiOFhLRGUyNkJsZ2k2QUQ0Q2l3VFYrZUtMMEJUcC85U3RxYS9VaDhrZ29FMkNmUjQwK0Z2RWpHZEtyMzA1a1dxQlFGVkg1KzFCZ21nVWpCYnR5cG52c1ZoUTBVbC8xRUlHYXE0QkNPZnFFeFVqdFBvVDdMZW5McjlXNmNhYmdXRk1XV21IcmVBN01xaytEbzVPMmcyM3JKd2tPanJ4WUxwYkNIZTRQNGd5dUFjVmg5b3RyMndScExoS0Vsb0ZZU3NKcnRqOHVBYitKcGNHM1RUMG11bHZsWjZOWVlxTys3U2NHdW5CUzdYdDZONi9aUkpuYXpNMklnV1JtUVZrSk1tWDg1WDJ6TVZGL0orV3lMeGhLWkFRblArTjN6OUNPdG50VDZjdnoxVUpoTEEzdnJhTThCRTVaTDErd0VzMERuRQo=
+
+---
+apiVersion: v1
 kind: Pod
 metadata:
   name: mongodb
@@ -46,13 +62,36 @@ spec:
     - name: mongodb
       image: weblog-db:v1.0.0
       imagePullPolicy: Never
-      command:
+      args:
         - "mongod"
+        - "--auth"
         - "--bind_ip_all"
+      env:
+        - name: "MONGO_INITDB_ROOT_USERNAME"
+          valueFrom:
+            secretKeyRef:
+              name: mongo-sevret
+              key: root_username
+        - name: "MONGO_INITDB_ROOT_PASSWORD"
+          valueFrom:
+            secretKeyRef:
+              name: mongo-sevret
+              key: root_password
+        - name: "MONGO_INITDB_DATABASE"
+          value: "admin"
       volumeMounts:
         - mountPath: /data/db
           name: storage
+        - mountPath: /home/mongodb
+          name: secret
   volumes:
     - name: storage
       persistentVolumeClaim:
         claimName: storage-claim
+    - name: secret
+      secret:
+        secretName: mongo-sevret
+        items:
+          - key: keyfile
+            path: keyfile
+            mode: 0700
