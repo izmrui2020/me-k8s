@@ -3,10 +3,13 @@ kind: Pod
 metadata:
   name: debug
   namespace: default
+  labels:
+    app: weblog
+    env: study
 spec:
   containers:
     - name: debug
-      image: debug
+      image: debug:v1.0.1
       imagePullPolicy: Never
       command:
         - "sh"
