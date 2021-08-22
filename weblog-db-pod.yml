@@ -13,8 +13,8 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "./storage"
-    type: Directory
+    path: "/data/storage"
+    type: DirectoryOrCreate
 
 ---
 apiVersion: v1
@@ -31,13 +31,11 @@ spec:
   resources:
     requests:
       storage: 1Gi
-
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  creationTimestamp: "2021-08-17T14:28:52Z"
-  name: mongo-sevret
+  name: mongo-secret
   namespace: default
   labels:
     app: weblog
@@ -46,7 +44,7 @@ type: Opaque
 data:
   root_username: YWRtaW4=
   root_password: UGFzc3cwcmQ=
-  keyfile: OW5zNjdZQ1NOOXkzWHJVeEtUSWZ3SlNSSVJmcGd5U2RIdExackc5a1dxUHZlOC9TbUdPb3YydDJTQWJXdzhZS1ZKYjloSEZQT1R1RmdHNzl4TmVJQXBhRWZEWit4VStFRkxQazRPYXFLd1FGbUZFWVZDamdrS3dvWUR2WnUyM0R2emhIOGtQcWNNTTMvems0QXJCVVVTYVFwejk0RXNSajVSQzdKVSs4ck5VYzFheW1iM3dJa3FTd0ZtcXhoZU44MU44TStnU3A5TGhiY1BFeGE3UndMQ1Bmd2tFSS9zS2YrdENFVjZ6dE5HNmFQNW1sN2VjRjB1blFDYWJ1dmhWeG01RzBwa0xyM1F2SXlrSU9sb3JFRGEvOFVuQ2ovdXlqUEUrR3JoTmV3SlZQUUMvTGE5UytQR3ZZMFNRcklxanNWQkdJMVAxYVB5a2lLNzlod0VEZEp3ZXdDTkJHa3pITGdBQzd5WFREcXBLelRpVFZaOUs2ZE5ENDJWRjhaZnNMV3ZCNjFNTzN2ditubmJpSm42WkcrMUhOR3YxeGhmVEZpOHEyVzlpOGE5aUZYTmhzUnhmc212bTU5VC9COEFKdHFmSVUxbENxQXBSK3ptbTJwMGVXTm4vdVZ6TEtPMm50enRwOTduR2hmVzRaTWVoWGZOOFdJTjR6SkFSZ0NXZUZHalUwbzZyMjJDZ05hTzhETWdVMWpHaUVvWjc1MmVNS1hCOUFwUHV3Y0FDUmNvMGFKbjg1VWMzSHB4bFptd2FmVllNc2pQVXR4Z2w4U3czZzZIY3ZXRmRtSGR6cGQvdXZQVGhPQkMrWjBJRm9ONlFmblovSVZVVEpvMGhuWXEwL0JiMlFPaDhaUVYxaVVhK2RSb05SYmg0bHdZNDZabC9ZWFVBZFVnS1FEUWRaVkFUZ0pHZGpqNzYrcmZ3bGl3cTRiOFhLRGUyNkJsZ2k2QUQ0Q2l3VFYrZUtMMEJUcC85U3RxYS9VaDhrZ29FMkNmUjQwK0Z2RWpHZEtyMzA1a1dxQlFGVkg1KzFCZ21nVWpCYnR5cG52c1ZoUTBVbC8xRUlHYXE0QkNPZnFFeFVqdFBvVDdMZW5McjlXNmNhYmdXRk1XV21IcmVBN01xaytEbzVPMmcyM3JKd2tPanJ4WUxwYkNIZTRQNGd5dUFjVmg5b3RyMndScExoS0Vsb0ZZU3NKcnRqOHVBYitKcGNHM1RUMG11bHZsWjZOWVlxTys3U2NHdW5CUzdYdDZONi9aUkpuYXpNMklnV1JtUVZrSk1tWDg1WDJ6TVZGL0orV3lMeGhLWkFRblArTjN6OUNPdG50VDZjdnoxVUpoTEEzdnJhTThCRTVaTDErd0VzMERuRQo=
+  keyfile: bWk5NWJwamNvSlZnMzBzcHl0TjlWOUlucVR4UFk4WFJvM2tKVmFIRHZiKzZGY1VGdVl6ekdIc05hQjRPM1pqdUpFclNTUjZsR2NPQ1BMNjI1Nis1bnh2M3hpaUlzTFBhY0N1YnQwMUo5OU1QNGVYamswNi9nbjVqRDZKTm5JcEpXZ3FMdU9mV1RqU0lrRjFYLzR2WWMrV1N1dXV5RUR0aEpLQnVpOEtucTFpQVRGS0pTVmlOdmdjN2IxdnRiRmV3YzNKYXZvTGppNzlGZ0t6czNLUks2QWlaWXNiL0ltRXdKS0VrZkpERXRxRUw4cENKenFiZ05INmU1ZWRYTHlWbzdISkQzYVM1enF2THlERDRjM240OVpRL28vZmFOUndaWk1YV3BLdHdNeW9VL2VXMDJJdEppNkFQcjQ3SEpiWDJPT0xjRGt4V0VvTjlFZVJEcTJ5TDNGOTRhaWFRUHBReTloSUhCOUg5R2p4bVhDWnp0OWhZZk9mMkJaS0NmemJVZCtaSFZUSEw2alg1R3ovTVMxVXM5bmF2bjBCSkpYbnRUZW42dmpOUzF5dkZpYXZxMzhuQlovakhaWVh0NUJmWkJoYUIwdFo3K0pjMXhrRkRLR05GQ2JyZkluY0pHMHRteUppZUk2RWwzcnNFdE10NW4vUW1WbEo1L3lDUks5N1V4WHhrT0REMklTQVVKUnY4MmJRbE9SSnFscUtOU2RPV0RNNlBxQTV3TEZXMnVsbVY0NldzQnFZaVhOcjA5TGxQRVVVUHByc1VuTzBPdEc4NWpIRE55ZW1xTUZJRmczT0RXQTIzbzBxM0VEVy9Gdmh0enV3dHorS0ZtSCtXUWNBN21tZXZDMHM0SU9Cck1VV0ljbkVnTWZCRjJKZ2R5c2RJcnZuVi9mNHJuQk84RTE1OEkrWjFYVytiYk1idFJ3dUN1MXgzdkY4MStsQ3hvQURhdVZXNjhadjQvNmE3UGZjcHloTE9tVmVGZzdXbFFhV0R0VXpZM1hLSFNVVFRwMUY4RVZpUG83NmVyRVNtTis4YUQybC9lbWgzL01hT0lhQStjWURUS3l4YXpZRjBLWTg1WWQyTi9kUU1ic1JRVU51ZDZXY2Y3aGNhc21RTlVvWUs3REhIaDdTSFNJc3BGSTFEcVE4cndJVFJ2TnM1U29WOVRKKzBXRkM5M2NsRmZhMGZjSThhQlRUSVEzTU5sMHBSZktkK2gweUI2OHdXM2RrSUtZMUJab3JSM3U5ZXRJWEx4b2pmTW91SFdGNlhFVmVIRStaNjBXVUtZMVlZbklMeWVqajZxZVNqb1VIL3VEN3ppZTVEYzlFaURxY1UyU1gvY29TZ0pjQXYzS0VCTDRVNAo=
 
 ---
 apiVersion: v1
@@ -70,12 +68,12 @@ spec:
         - name: "MONGO_INITDB_ROOT_USERNAME"
           valueFrom:
             secretKeyRef:
-              name: mongo-sevret
+              name: mongo-secret
               key: root_username
         - name: "MONGO_INITDB_ROOT_PASSWORD"
           valueFrom:
             secretKeyRef:
-              name: mongo-sevret
+              name: mongo-secret
               key: root_password
         - name: "MONGO_INITDB_DATABASE"
           value: "admin"
@@ -90,7 +88,7 @@ spec:
         claimName: storage-claim
     - name: secret
       secret:
-        secretName: mongo-sevret
+        secretName: mongo-secret
         items:
           - key: keyfile
             path: keyfile
